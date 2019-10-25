@@ -1,0 +1,49 @@
+version: '3.1'
+services:
+  mysql:
+    image: mysql:5.7
+    ports:
+    - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sugar
+      MYSQL_USER: rasphp
+      MYSQL_PASSWORD: rasphp
+  phpmyadmin:
+    # restart: always
+    image: phpmyadmin/phpmyadmin
+    ports:
+    - '8888:80'
+    - '9999:9000'
+    environment:
+      MYSQL_USERNAME: sugar
+      MYSQL_PASSWORD: sugar
+      MYSQL_ROOT_PASSWORD: root
+      PMA_HOST: mysql
+    depends_on:
+    - mysql
+  web:
+    image: thecodingmachine/php:7.2-v1-apache-node8
+    hostname: 'rasphp'
+    environment:
+      PHP_INI_ERROR_REPORTING: E_ERROR
+      MYSQL_NAME: 'mysql'
+      MYSQL_PORT: 'tcp://mysql:3306'
+      APACHE_EXTENSION_REWRITE: 1
+      APACHE_EXTENSION_HEADERS: 1
+      APACHE_EXTENSION_EXPIRES: 1
+      APACHE_LOG_DIR: '/var/log/apache2'
+      PHP_INI_AUTO_APPEND_FILE: '/var/www/html/src/init.php'
+      PHP_INI_XDEBUG__FORCE_DISPLAY_ERRORS: 1
+      PHP_INI_DISPLAY_ERRORS: 1
+      PHP_EXTENSIONS:  bcmath exif gd intl mcrypt memcached mongodb sockets sysvmsg sysvsem sysvshm pcntl xmlrpc xsl
+#      PHP_EXTENSION_XDEBUG: 1
+#      PHP_INI_XDEBUG__REMOTE_AUTOSTART: 1
+      #serverName=SomeName, where SomeName is the name of the server configured in Settings / Preferences | Languages & Frameworks | PHP | Servers
+      PHP_IDE_CONFIG: "serverName=Docker"
+    depends_on:
+    - mysql
+    ports:
+    - 8585:80
+    volumes:
+    - .:/var/www/html:rw

@@ -1,0 +1,5 @@
+{
+    "require": {
+        "antecedent/patchwork": "^2.1"
+    }
+}
