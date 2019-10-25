@@ -1,5 +1,6 @@
 {
     "require": {
-        "antecedent/patchwork": "^2.1"
+        "antecedent/patchwork": "^2.1",
+        "greenlion/php-sql-parser": "^4.3"
     }
 }

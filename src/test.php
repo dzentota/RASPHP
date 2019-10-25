@@ -9,7 +9,7 @@ if (mysqli_connect_errno()) {
 }
 
 /* Select queries return a resultset */
-if ($result = mysqli_query($link, 'SELECT * FROM demo')) {
+if ($result = mysqli_query($link, 'SELECT id, text FROM demo WHERE 1 > 0 LIMIT 1')) {
     while ($row = mysqli_fetch_assoc($result)) {
         print_r($row);
     }

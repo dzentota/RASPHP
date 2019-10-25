@@ -33,7 +33,7 @@ services:
       APACHE_EXTENSION_HEADERS: 1
       APACHE_EXTENSION_EXPIRES: 1
       APACHE_LOG_DIR: '/var/log/apache2'
-      PHP_INI_AUTO_APPEND_FILE: '/var/www/html/src/init.php'
+#      PHP_INI_AUTO_APPEND_FILE: '/var/www/html/src/init.php'
       PHP_INI_XDEBUG__FORCE_DISPLAY_ERRORS: 1
       PHP_INI_DISPLAY_ERRORS: 1
       PHP_EXTENSIONS:  bcmath exif gd intl mcrypt memcached mongodb sockets sysvmsg sysvsem sysvshm pcntl xmlrpc xsl
