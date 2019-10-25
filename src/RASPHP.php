@@ -8,7 +8,7 @@ class RASPHP
 {
     const SECTION = 'section';
 
-    public static function getQuerySignature(string $query)
+    public static function getQuerySignature(string $query): array
     {
         $parsed = static::getParsedQuery($query);
         $result = [];
@@ -18,21 +18,28 @@ class RASPHP
                     $result[] = self::unsetValues($item, ['expr_type']);
                     break;
                 case 'OPTIONS':
+                    $result[] = $item;
                     break;
                 case 'INTO':
+                    $result[] = $item;
                     break;
                 case 'FROM':
+                    $result[] = self::unsetValues($item, ['expr_type', 'table', 'join_type']);
                     break;
                 case 'WHERE':
+                    $result[] = self::unsetValues($item, ['expr_type']);
                     break;
                 case 'GROUP':
+                    $result[] = self::unsetValues($item, ['expr_type']);
                     break;
                 case 'HAVING':
+                    $result[] = self::unsetValues($item, ['expr_type']);
                     break;
                 case 'ORDER':
+                    $result[] = self::unsetValues($item, ['expr_type']);
                     break;
                 case 'LIMIT':
-                    $result[] = [self::SECTION => 'LIMIT', 'items' => array_keys($item)];
+                    $result[] = array_keys($item);
                     break;
             }
         }
@@ -41,12 +48,26 @@ class RASPHP
 
     protected static function unsetValues(array $data, array $keys): array
     {
-        array_walk_recursive($data, function (&$item, $key) use ($keys) {
+        $data = self::walk_recursive_remove($data, function ($item, $key) use ($keys) {
             if (!in_array($key, $keys)) {
-                $item = '';
+                return true;
             }
         });
         return $data;
+    }
+
+    protected static function walk_recursive_remove (array $array, callable $callback) {
+        foreach ($array as $k => $v) {
+            if (is_array($v)) {
+                $array[$k] = self::walk_recursive_remove($v, $callback);
+            } else {
+                if ($callback($v, $k)) {
+                    unset($array[$k]);
+                }
+            }
+        }
+
+        return $array;
     }
 
     public static function getParsedQuery(string $query): array

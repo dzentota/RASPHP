@@ -8,8 +8,8 @@ ini_set('display_errors',1);
 error_reporting(E_ALL);
 
 redefine('mysqli_query', function($link, $query, ...$params) {
-    $parsed = \RASPHP\RASPHP::getQuerySignature($query);
-    print_r($parsed);
+    $signature = \RASPHP\RASPHP::getQuerySignature($query);
+    echo json_encode($signature, JSON_PRETTY_PRINT);
 //    echo 'patched', PHP_EOL;
     $result = relay();
     return $result;
