@@ -30,18 +30,44 @@
   <link href="signin.css" rel="stylesheet">
 </head>
 <body class="text-center">
-<form class="form-signin">
+<form class="form-signin" method="post">
   <img class="mb-4" src="img/bootstrap-solid.svg" alt="" width="72" height="72">
   <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
   <label for="inputEmail" class="sr-only">Email address</label>
-  <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+  <input type="email" id="inputEmail" class="form-control" placeholder="Email address" name="email" required autofocus>
   <label for="inputPassword" class="sr-only">Password</label>
-  <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+  <input type="password" id="inputPassword" class="form-control" placeholder="Password" name="password" required>
   <div class="checkbox mb-3">
     <label>
       <input type="checkbox" value="remember-me"> Remember me
     </label>
   </div>
+    <?php
+
+    if (!empty($_POST['email']) && !empty($_POST['password'])) {
+        $link = mysqli_connect('mysql', 'rasphp', 'rasphp', 'rasphp');
+        /* check connection */
+        if (mysqli_connect_errno()) {
+            printf('Connect failed: %s\n', mysqli_connect_error());
+            exit();
+        }
+        $hash = md5($_POST['password']);
+        $sql = <<<SQL
+SELECT * FROM users WHERE email= "{$_POST['email']}" AND password="{$hash}"
+SQL;
+        /* Select queries return a resultset */
+        if ($result = mysqli_query($link, $sql)) {
+            if ($row = mysqli_fetch_assoc($result)) {
+                echo '<h3 style="color:green">Logged in as ' . $row['email'] . '</h3>';
+            } else {
+                echo '<h3 style="color:red">Invalid login or password</h3>';
+            }
+            mysqli_free_result($result);
+        }
+
+        mysqli_close($link);
+    }
+    ?>
   <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
   <p class="mt-5 mb-3 text-muted">&copy; 2017-2019</p>
 </form>
