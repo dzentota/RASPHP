@@ -22,8 +22,6 @@ $quill = new Quill(
     new SigningSecretKey(Base64UrlSafe::decode('B0IfjH-jvJ3b9TWCI89RbCQjAvbQjp024RR8RpxZddd-QFfscpnJdnUKRr-SnQZ-OGJrwAv95Z6I-WRKf-FIxg==')),
     new Client()
 );
-$quill->write('trlolo');
-die();
 // Push the Handler to Monolog
 $log = new Logger('security');
 $handler = new QuillHandler($quill, Logger::ALERT);
