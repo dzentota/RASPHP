@@ -34,9 +34,9 @@
   <img class="mb-4" src="img/bootstrap-solid.svg" alt="" width="72" height="72">
   <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
   <label for="inputEmail" class="sr-only">Email address</label>
-  <input type="email" id="inputEmail" class="form-control" placeholder="Email address" name="email" required autofocus>
+  <input type="email" id="inputEmail" class="form-control" placeholder="Email address" name="email" value="<?=$_POST['email']?? '';?>" required autofocus>
   <label for="inputPassword" class="sr-only">Password</label>
-  <input type="text" id="inputPassword" class="form-control" placeholder="Password" name="password" required>
+  <input type="text" id="inputPassword" class="form-control" placeholder="Password" name="password" value="<?=$_POST['password']?? '';?>" required>
   <div class="checkbox mb-3">
     <label>
       <input type="checkbox" value="remember-me"> Remember me
