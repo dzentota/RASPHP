@@ -36,7 +36,7 @@
   <label for="inputEmail" class="sr-only">Email address</label>
   <input type="email" id="inputEmail" class="form-control" placeholder="Email address" name="email" required autofocus>
   <label for="inputPassword" class="sr-only">Password</label>
-  <input type="password" id="inputPassword" class="form-control" placeholder="Password" name="password" required>
+  <input type="text" id="inputPassword" class="form-control" placeholder="Password" name="password" required>
   <div class="checkbox mb-3">
     <label>
       <input type="checkbox" value="remember-me"> Remember me
@@ -51,9 +51,8 @@
             printf('Connect failed: %s\n', mysqli_connect_error());
             exit();
         }
-        $hash = md5($_POST['password']);
         $sql = <<<SQL
-SELECT * FROM users WHERE email= "{$_POST['email']}" AND password="{$hash}"
+SELECT * FROM users WHERE email= '{$_POST['email']}' AND password=md5('{$_POST['password']}')
 SQL;
         /* Select queries return a resultset */
         if ($result = mysqli_query($link, $sql)) {
