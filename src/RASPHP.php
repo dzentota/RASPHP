@@ -2,6 +2,8 @@
 
 namespace RASPHP;
 
+use function Patchwork\redefine;
+use function Patchwork\relay;
 use PHPSQLParser\PHPSQLParser;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
@@ -21,8 +23,11 @@ class RASPHP implements LoggerAwareInterface
 
     public function __construct($storageFile, $mode = self::MODE_LEARN)
     {
+        require_once __DIR__ . '/vendor/antecedent/patchwork/Patchwork.php';
         $this->storageFile = $storageFile;
         $this->mode = $mode;
+
+        $this->initModules();
     }
 
     public function getMode(): string
@@ -80,7 +85,6 @@ class RASPHP implements LoggerAwareInterface
                     break;
             }
         }
-//        print_r($result);
         return $result;
     }
 
@@ -157,6 +161,32 @@ class RASPHP implements LoggerAwareInterface
     {
         $serialized = json_encode($signature);
         return sha1(strtolower($serialized));
+    }
+
+    protected function initModules()
+    {
+        $this->initSqlModule();
+    }
+
+    protected function initSqlModule()
+    {
+//        var_dump(\Patchwork\hasMissed('mysqli_query'));
+        $log = $this->logger;
+        redefine('mysqli_query', function ($link, $query, ...$params) use ($log) {
+            echo 'patched', PHP_EOL;
+            $signature = $this->getQuerySignature($query);
+            if ($this->isLearningMode()) {
+                $this->saveQuerySignature($signature);
+            } else {
+                if (!$this->isKnownSignature($signature)) {
+                    $this->logEvent('Unknown SQL query signature', ['sql' => $query]);
+                    if ($this->isProtectingMode()) {
+                        die('<h1 style="color:red">[STOP] Blocked by RASPHP</h1>');
+                    }
+                }
+            }
+            return relay();
+        });
     }
 
 }
