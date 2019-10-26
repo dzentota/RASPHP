@@ -114,13 +114,17 @@ class RASPHP implements LoggerAwareInterface
         return $parser->parse($query);
     }
 
-    public function saveQuerySignature(array $signature)
+    public function saveQuerySignature(array $signature, $compact = false)
     {
         $hash = $this->getSignatureHash($signature);
         if (file_exists($this->storageFile)) {
             $signatures = require $this->storageFile;
         } else {
-            $signatures[$hash] = $signature;
+            if ($compact) {
+                $signatures[] = $hash;
+            } else {
+                $signatures[$hash] = $signature;
+            }
         }
         file_put_contents($this->storageFile, '<?php return ' . var_export($signatures, true) . ';');
     }

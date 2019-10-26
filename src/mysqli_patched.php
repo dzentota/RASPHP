@@ -22,21 +22,13 @@ $quill = new Quill(
     new SigningSecretKey(Base64UrlSafe::decode('B0IfjH-jvJ3b9TWCI89RbCQjAvbQjp024RR8RpxZddd-QFfscpnJdnUKRr-SnQZ-OGJrwAv95Z6I-WRKf-FIxg==')),
     new Client()
 );
-// Push the Handler to Monolog
 $log = new Logger('security');
 $handler = new QuillHandler($quill, Logger::ALERT);
 $log->pushHandler($handler);
 
-//// Now security events will be logged in your Chronicle
-//$log->alert(
-//    'User bob logged in at ' .
-//    ((new DateTime())->format(\DateTime::ATOM))
-//);
-
 redefine('mysqli_query', function ($link, $query, ...$params) use ($log) {
     $rasphp = new \RASPHP\RASPHP('signatures.php');
     $rasphp->setLogger($log);
-    $rasphp->logEvent('Unknown SQL query signature', ['sql' => $query]);
     $signature = $rasphp->getQuerySignature($query);
     if (!$rasphp->isLearningMode()) {
         $rasphp->saveQuerySignature($signature);
@@ -48,8 +40,7 @@ redefine('mysqli_query', function ($link, $query, ...$params) use ($log) {
             }
         }
     }
-    echo json_encode($signature, JSON_PRETTY_PRINT);
+//    echo json_encode($signature, JSON_PRETTY_PRINT);
     $result = relay();
     return $result;
 });
-# These will use SQLite instead:
