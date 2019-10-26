@@ -27,16 +27,16 @@ $handler = new QuillHandler($quill, Logger::ALERT);
 $log->pushHandler($handler);
 
 redefine('mysqli_query', function ($link, $query, ...$params) use ($log) {
-    $rasphp = new \RASPHP\RASPHP('signatures.php');
+    $rasphp = new \RASPHP\RASPHP('signatures.php', \RASPHP\RASPHP::MODE_PROTECT);
     $rasphp->setLogger($log);
     $signature = $rasphp->getQuerySignature($query);
-    if (!$rasphp->isLearningMode()) {
+    if ($rasphp->isLearningMode()) {
         $rasphp->saveQuerySignature($signature);
     } else {
         if (!$rasphp->isKnownSignature($signature)) {
             $rasphp->logEvent('Unknown SQL query signature', ['sql' => $query]);
             if ($rasphp->isProtectingMode()) {
-                die('Blocked by RASPHP');
+                die('<h1 style="color:red">[STOP] Blocked by RASPHP</h1>');
             }
         }
     }

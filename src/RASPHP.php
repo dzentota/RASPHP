@@ -80,6 +80,7 @@ class RASPHP implements LoggerAwareInterface
                     break;
             }
         }
+//        print_r($result);
         return $result;
     }
 
@@ -116,25 +117,29 @@ class RASPHP implements LoggerAwareInterface
 
     public function saveQuerySignature(array $signature, $compact = false)
     {
-        $hash = $this->getSignatureHash($signature);
+        if ($this->isKnownSignature($signature)) {
+            return;
+        }
         if (file_exists($this->storageFile)) {
             $signatures = require $this->storageFile;
         } else {
-            if ($compact) {
-                $signatures[] = $hash;
-            } else {
-                $signatures[$hash] = $signature;
-            }
+            $signatures = [];
+        }
+        $hash = $this->getSignatureHash($signature);
+        if ($compact) {
+            $signatures[$hash] = 1;
+        } else {
+            $signatures[$hash] = $signature;
         }
         file_put_contents($this->storageFile, '<?php return ' . var_export($signatures, true) . ';');
     }
 
     public function isKnownSignature(array $signature): bool
     {
-        $signatures = [];
-        if (file_exists($this->storageFile)) {
-            $signatures = require $this->storageFile;
+        if (!file_exists($this->storageFile)) {
+            return false;
         }
+        $signatures = require $this->storageFile;
         $hash = $this->getSignatureHash($signature);
         return isset($signatures[$hash]);
     }
@@ -151,8 +156,7 @@ class RASPHP implements LoggerAwareInterface
     protected function getSignatureHash(array $signature): string
     {
         $serialized = json_encode($signature);
-        $hash = sha1(strtolower($serialized));
-        return $hash;
+        return sha1(strtolower($serialized));
     }
 
 }
