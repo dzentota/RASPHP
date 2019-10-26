@@ -1,6 +1,8 @@
 {
     "require": {
         "antecedent/patchwork": "^2.1",
-        "greenlion/php-sql-parser": "^4.3"
+        "greenlion/php-sql-parser": "^4.3",
+        "paragonie/quill": "^0.5.3",
+        "paragonie/monolog-quill": "^0.1.0"
     }
 }
